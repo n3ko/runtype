@@ -247,7 +247,9 @@ const scalarToBoolean: Coercer<boolean> = (u) =>
 	typeof u === 'number'
 		? ok(!!u)
 		: typeof u === 'string'
-			? ok(Number.isFinite(+u) ? !!+u : !!u)
+			? Number.isFinite(+u)
+				? ok(!!+u)
+				: error('expected boolean')
 			: error('expected boolean')
 
 function toDate(u: string | number): Result<Date, RTError> {

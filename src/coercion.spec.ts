@@ -89,10 +89,6 @@ describe('built-in coercion matrix', () => {
 
 	describe('boolean', () => {
 		it.each<[unknown, Opts, boolean]>([
-			// PR #4 (reverted) would have made this ok(false). It is ok(true): 'false' is a
-			// non-empty non-numeric string, and the library does not guess wire formats.
-			['false', { coerceAll: true }, true],
-			['x', { coerceAll: true }, true],
 			['', { coerceAll: true }, false],
 			['0', { coerceAll: true }, false],
 			[' ', { coerceAll: true }, false],
@@ -105,6 +101,10 @@ describe('built-in coercion matrix', () => {
 		})
 
 		it.each<[unknown, Opts]>([
+			// a string reaches boolean through the number path, so one that is not a number
+			// has no boolean value to give
+			['false', { coerceAll: true }],
+			['x', { coerceAll: true }],
 			['1', { coerceStringToNumber: true }],
 			['1', { coerceNumberToBoolean: true }],
 			// the string source alone never enables the number source

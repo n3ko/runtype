@@ -328,6 +328,10 @@ T.decode(T.number, '42', { coerceStringToNumber: true })
 | `coerceStringToNumber` | Coerce string to number |
 | `coerceScalar` | Enable all scalar coercions above |
 
+A string reaches `T.boolean` through the number path, so it needs `coerceStringToNumber` and
+`coerceNumberToBoolean` together, and a string that is not a number is rejected. Use
+`coerceToBoolean` to decode a wire format that spells booleans out - see *Custom Coercion*.
+
 ### Date Coercion
 
 | Option | Description |
@@ -376,9 +380,9 @@ export type Coercer<T> = (value: unknown) => Result<T, RTError>
 | `coerceToBigInt` | `Coercer<bigint>` | `T.bigint` |
 | `coerceToArray` | `(value: unknown) => unknown` | `T.array()` (a pre-transform, not a `Coercer`) |
 
-The obvious example is string-to-boolean. `'false'` is a non-empty string, so whether it means
-`false` depends entirely on the wire format you are decoding (XSD, a query string, a CSV, a form
-post) - which is why it is yours to say and not a built-in rule:
+The obvious example is string-to-boolean. `'false'` is not a number, so it is rejected by default:
+what it means depends entirely on the wire format you are decoding (XSD, a query string, a CSV,
+a form post), which is yours to say and not a built-in rule:
 
 ```typescript
 const xsdBoolean: T.Coercer<boolean> = (v) => {
